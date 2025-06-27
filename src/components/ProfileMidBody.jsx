@@ -1,37 +1,36 @@
-import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+// import { jwtDecode } from "jwt-decode";
+// import { useEffect, useState } from "react";
 import { Button, Col, Image, Nav, Row, Spinner } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProfilePostCard from "./ProfilePostCard";
-import { fetchPostsByUser } from "../features/posts/postsSlice";
+import me_circle from "../assets/me_circle.jpeg"
+// import { fetchPostsByUser } from "../features/posts/postsSlice";
 
 export default function ProfileMidBody() {
   // const [posts, setPosts] = useState([]);
   const url =
     "https://pbs.twimg.com/profile_banners/83072625/1602845571/1500x500";
-  const pic =
-    "https://pbs.twimg.com/profile_images/1587405892437221376/h167Jlb2_400x400.jpg";
+  // const pic = "../assets/me_circle.jpeg"
 
-  const dispatch = useDispatch()
   const posts = useSelector(store => store.posts.posts)
   const loading = useSelector(store => store.posts.loading)
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      const user_id = decodedToken.id;
-      console.log(user_id)
-      dispatch(fetchPostsByUser(user_id))
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   if (token) {
+  //     const decodedToken = jwtDecode(token);
+  //     const user_id = decodedToken.id;
+  //     console.log(user_id)
+  //     dispatch(fetchPostsByUser(user_id))
+  //   }
+  // }, [dispatch]);
 
   return (
     <Col sm={6} className="bg-light" style={{ border: "1px solid lightgrey" }}>
       <Image src={url} fluid />
       <br />
       <Image
-        src={pic}
+        src={me_circle}
         roundedCircle
         style={{
           width: 150,

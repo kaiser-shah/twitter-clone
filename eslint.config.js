@@ -29,6 +29,11 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      "eslint.options": {
+  "@typescript-eslint/no-unused-vars": "off",
+},
     },
   },
+
+  
 ]

@@ -1,33 +1,40 @@
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup
+} from "firebase/auth";
+
 import { Button, Col, Image, Row, Modal, Form } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import useLocalStorage from "use-local-storage";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/AuthProvider";
 
 export default function AuthPage() {
   const loginImage = "https://sig1.co/img-twitter-1";
-  const url =
-    "https://418e4152-6e7f-49f7-ad91-5ebf853feb81-00-3ghtwiy6ig8a8.pike.replit.dev";
   const [modalShow, setModalShow] = useState(null);
   const handleShowSignUp = () => setModalShow("signUp");
   const handleShowLogin = () => setModalShow("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [authToken, setAuthToken] = useLocalStorage("authToken", "");
 
   const navigate = useNavigate();
-
+  const auth = getAuth();
+  const {currentUser } = useContext(AuthContext);
   useEffect(() => {
-    if (authToken) {
-      navigate("/profile");
-    }
-  }, [authToken, navigate]);
+    if (currentUser ) navigate("/profile");
+  }, [currentUser, navigate])
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${url}/signup`, { username, password });
-      console.log(res.data);
+     const res = await createUserWithEmailAndPassword(
+      auth,
+      username,
+      password
+     );
+     console.log(res.user)
     } catch (error) {
       console.error(error);
     }
@@ -36,15 +43,26 @@ export default function AuthPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${url}/login`, { username, password });
-      if (res.data && res.data.auth === true && res.data.token) {
-        setAuthToken(res.data.token); // save token to localStorage
-        console.log("Login was successful, token saved");
-      }
+      await signInWithEmailAndPassword(
+        auth,
+        username,
+        password);
+      
     } catch (error) {
       console.log(error);
     }
   };
+
+  const provider = new GoogleAuthProvider();
+  const handleGoogleLogin = async(e) => {
+    e.preventDefault();
+    try {
+      await signInWithPopup(auth, provider)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleClose = () => setModalShow(null);
 
   return (
@@ -64,7 +82,7 @@ export default function AuthPage() {
           Join Twitter Today.
         </p>
         <Col sm={5} className="d-grid gap-2">
-          <Button className="rounded-pill" variant="outline-dark">
+          <Button className="rounded-pill" variant="outline-dark" onClick={handleGoogleLogin}>
             <i className="bi bi-google"></i> Sign up with Google
           </Button>
           <Button className="rounded-pill" variant="outline-dark">
