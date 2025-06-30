@@ -16,6 +16,7 @@ export default function AuthPage() {
   const [modalShow, setModalShow] = useState(null);
   const handleShowSignUp = () => setModalShow("signUp");
   const handleShowLogin = () => setModalShow("login");
+  const handleShowLoginError = () => setModalShow("error");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -41,8 +42,10 @@ export default function AuthPage() {
   };
 
   const handleLogin = async (e) => {
+    
     e.preventDefault();
     try {
+
       await signInWithEmailAndPassword(
         auth,
         username,
@@ -50,6 +53,8 @@ export default function AuthPage() {
       
     } catch (error) {
       console.log(error);
+      setError("Username and/or Password is incorrect")
+
     }
   };
 
@@ -57,13 +62,22 @@ export default function AuthPage() {
   const handleGoogleLogin = async(e) => {
     e.preventDefault();
     try {
+            provider.setCustomParameters({
+        prompt: "select_account", // Forces account chooser pop up.
+      })
       await signInWithPopup(auth, provider)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const handleClose = () => setModalShow(null);
+  const handleClose = () => {
+    setModalShow(null)
+    setError("")
+  };
+
+
+  const [error, setError] = useState("")
 
   return (
     <Row>
@@ -139,6 +153,7 @@ export default function AuthPage() {
                   placeholder="Enter password"
                 />
               </Form.Group>
+                <p> {error} </p>
 
               <p style={{ fontSize: "12px" }}>
                 By signing up, you agree to the Terms of Service and Privacy
