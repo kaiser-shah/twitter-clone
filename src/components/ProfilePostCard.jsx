@@ -3,19 +3,23 @@ import { useContext, useState} from 'react';
 import { useDispatch } from "react-redux";
 import { likePost, removeLikeFromPost } from "../features/posts/postsSlice";
 import { AuthContext } from "./AuthProvider";
+import UpdatePostModal from "./UpdatePostModal";
 
 export default function ProfilePostCard({ post }) {
-  const { content, id: postId} = post;
+  const { content, id: postId, imageUrl} = post;
   const [likes, setLikes] = useState(post.likes || [])
   const dispatch = useDispatch()
   const {currentUser} = useContext(AuthContext)
   const userId = currentUser?.uid
 
-  // user has likesd the post if their id is in the likes array
+  // user has liked the post if their id is in the likes array
   const isLiked = likes.includes(userId)
 
   const pic =    "https://pbs.twimg.com/profile_images/1587405892437221376/h167Jlb2_400x400.jpg";
-  const BASE_URL = "https://b2093b0a-b8a1-493b-a78f-36729cbde74e-00-l9pavi6cnqhn.sisko.replit.dev"
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
+  const handleShowUpdateModal = () => setShowUpdateModal(true)
+  const handleCloseUpdateModal = () => setShowUpdateModal(false)
     
   
     const handleLike = () => (isLiked? removeFromLikes() : addToLikes())
@@ -50,6 +54,7 @@ const removeFromLikes = () => {
         <strong>Shah</strong>
         <span>@gmail.com May 25</span>
         <p>{content}</p>
+        <Image src={imageUrl} style={{ width: 150 }} />
         <div className="d-flex justify-content-between">
           <Button variant="light">
             <i className="bi bi-chat"></i>
@@ -69,6 +74,23 @@ const removeFromLikes = () => {
           <Button variant="light">
             <i className="bi bi-upload"></i>
           </Button>
+          <Button variant="light">
+            <i
+            className="bi bi-pencil-square"
+              onClick={handleShowUpdateModal}
+            ></i>
+          </Button>
+          <Button variant="light">
+            <i
+            className="bi bi-trash"></i>
+          </Button>
+          <UpdatePostModal
+          show={showUpdateModal}
+          handleClose={handleCloseUpdateModal}
+          postId={postId}
+          originalPostContent={content}
+          imageUrl = {imageUrl}
+          />
         </div>
       </Col>
     </Row>
