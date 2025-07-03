@@ -3,7 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
-  signInWithPopup
+  signInWithPopup,
 } from "firebase/auth";
 
 import { Button, Col, Image, Row, Modal, Form } from "react-bootstrap";
@@ -22,62 +22,54 @@ export default function AuthPage() {
 
   const navigate = useNavigate();
   const auth = getAuth();
-  const {currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   useEffect(() => {
-    if (currentUser ) navigate("/profile");
-  }, [currentUser, navigate])
+    if (currentUser) navigate("/profile");
+  }, [currentUser, navigate]);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-     const res = await createUserWithEmailAndPassword(
-      auth,
-      username,
-      password
-     );
-     console.log(res.user)
+      const res = await createUserWithEmailAndPassword(
+        auth,
+        username,
+        password
+      );
+      console.log(res.user);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleLogin = async (e) => {
-    
     e.preventDefault();
     try {
-
-      await signInWithEmailAndPassword(
-        auth,
-        username,
-        password);
-      
+      await signInWithEmailAndPassword(auth, username, password);
     } catch (error) {
       console.log(error);
-      setError("Username and/or Password is incorrect")
-
+      setError("Username and/or Password is incorrect");
     }
   };
 
   const provider = new GoogleAuthProvider();
-  const handleGoogleLogin = async(e) => {
+  const handleGoogleLogin = async (e) => {
     e.preventDefault();
     try {
-            provider.setCustomParameters({
+      provider.setCustomParameters({
         prompt: "select_account", // Forces account chooser pop up.
-      })
-      await signInWithPopup(auth, provider)
+      });
+      await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
-
-  const handleClose = () => {
-    setModalShow(null)
-    setError("")
   };
 
+  const handleClose = () => {
+    setModalShow(null);
+    setError("");
+  };
 
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   return (
     <Row>
@@ -96,11 +88,18 @@ export default function AuthPage() {
           Join Twitter Today.
         </p>
         <Col sm={5} className="d-grid gap-2">
-          <Button className="rounded-pill" variant="outline-dark" onClick={handleGoogleLogin}>
+          <Button
+            className="rounded-pill"
+            variant="outline-dark"
+            onClick={handleGoogleLogin}
+          >
             <i className="bi bi-google"></i> Sign up with Google
           </Button>
           <Button className="rounded-pill" variant="outline-dark">
             <i className="bi bi-apple"></i> Sign up with Apple
+          </Button>
+          <Button className="rounded-pill" variant="outline-dark">
+            <i className="bi bi-facebook"></i> Sign up with Facebook
           </Button>
           <p style={{ textAlign: "center" }}>or</p>
           <Button className="rounded-pill" onClick={handleShowSignUp}>
@@ -153,7 +152,7 @@ export default function AuthPage() {
                   placeholder="Enter password"
                 />
               </Form.Group>
-                <p> {error} </p>
+              <p> {error} </p>
 
               <p style={{ fontSize: "12px" }}>
                 By signing up, you agree to the Terms of Service and Privacy
